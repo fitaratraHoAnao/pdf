@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const pdfDirectory = path.join(__dirname, "pdf");
 
 // Middleware pour analyser les requêtes JSON
@@ -31,8 +31,10 @@ app.get("/recherche", (req, res) => {
     const pdfPath = path.join(pdfDirectory, `${sanitizedPdfName}.pdf`);
 
     if (fs.existsSync(pdfPath)) {
-        // Générer l'URL pour télécharger le fichier
-        const fileUrl = `http://localhost:${port}/pdf/${sanitizedPdfName}.pdf`;
+        // Utiliser l'URL de base selon le déploiement
+        const baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
+        const fileUrl = `${baseUrl}/pdf/${sanitizedPdfName}.pdf`;
+
         res.json({ message: "Fichier trouvé.", url: fileUrl });
     } else {
         res.status(404).json({ message: `Le fichier '${pdfName}' n'existe pas.` });
@@ -41,5 +43,5 @@ app.get("/recherche", (req, res) => {
 
 // Démarrer le serveur
 app.listen(port, () => {
-    console.log(`🚀 Serveur en cours d'exécution sur http://localhost:${port}`);
+    console.log(`🚀 Serveur en cours d'exécution sur le port ${port}`);
 });
