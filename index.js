@@ -18,9 +18,10 @@ app.use("/pdf", express.static(pdfDirectory, {
 }));
 
 // Route GET pour rechercher un fichier PDF
-app.post("/recherche", (req, res) => {
+app.get("/recherche", (req, res) => {
     const pdfName = req.query.pdf;
 
+    // Vérification si le paramètre pdf est fourni
     if (!pdfName) {
         return res.status(400).json({ message: "Veuillez fournir le paramètre 'pdf'." });
     }
@@ -29,11 +30,15 @@ app.post("/recherche", (req, res) => {
     const sanitizedPdfName = pdfName.trim().toLowerCase().replace(/\s+/g, "_");
     const pdfPath = path.join(pdfDirectory, `${sanitizedPdfName}.pdf`);
 
+    console.log(`Recherche du fichier : ${pdfPath}`);  // Affiche le chemin du fichier recherché
+
     if (fs.existsSync(pdfPath)) {
         // Construire l'URL pour télécharger le fichier
         const fileUrl = `http://localhost:${port}/pdf/${sanitizedPdfName}.pdf`;
+        console.log(`Fichier trouvé : ${fileUrl}`);  // Affiche l'URL du fichier trouvé
         res.json({ message: "Fichier trouvé.", url: fileUrl });
     } else {
+        console.log(`Fichier non trouvé : ${pdfPath}`);  // Affiche le chemin du fichier non trouvé
         res.status(404).json({ message: `Le fichier '${sanitizedPdfName}.pdf' n'existe pas.` });
     }
 });
