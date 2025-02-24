@@ -18,7 +18,7 @@ app.use("/pdf", express.static(pdfDirectory, {
 }));
 
 // Route GET pour rechercher un fichier PDF
-app.get("/recherche", (req, res) => {
+app.post("/recherche", (req, res) => {
     const pdfName = req.query.pdf;
 
     if (!pdfName) {
